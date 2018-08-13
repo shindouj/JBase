@@ -18,6 +18,9 @@ if (project.hasProperty("teamcity"))
 
 sourceCompatibility = 1.8
 
+if (project.hasProperty("teamcity"))
+    println(teamcity["nexusPassword"])
+
 repositories {
     maven {
         url "https://nexus.jeikobu.net/repository/maven-central/"
