@@ -1,0 +1,97 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group "net.jeikobu"
+
+def releaseNumber = "1.0"
+def isSnapshot = true
+
+version = releaseNumber
+if (isSnapshot) version = version + "-SNAPSHOT"
+
+def buildNumber = "LOCAL_DEV_BUILD"
+if (project.hasProperty("teamcity"))
+    buildNumber = teamcity["build.number"]
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url "https://nexus.jeikobu.net/repository/maven-central/"
+    }
+
+    maven {
+        url "https://nexus.jeikobu.net/repository/jcenter-proxy/"
+    }
+
+    maven {
+        url "https://nexus.jeikobu.net/repository/maven-releases/"
+    }
+
+    maven {
+        url "https://nexus.jeikobu.net/repository/maven-snapshots/"
+    }
+}
+
+dependencies {
+    implementation group: 'com.discord4j', name: 'Discord4J', version: '2.10.1'
+    implementation group: 'com.google.guava', name: 'guava', version: '26.0-jre'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourceJar
+}
+
+jar {
+    manifest {
+        attributes(
+                "Created-By": "Shindou Jeikobu",
+                "Date": new Date(),
+                "Implementation-Version": version + "-" + buildNumber,
+                "Build-Number": buildNumber
+        )
+    }
+}
+
+
+publishing {
+    repositories {
+        maven {
+            credentials {
+                if (project.hasProperty("teamcity")) {
+                    username teamcity["nexusUsername"]
+                    password teamcity["nexusPassword"]
+                } else {
+                    username project.nexusUsername
+                    password project.nexusPassword
+                }
+            }
+            def releasesRepoUrl = "https://nexus.jeikobu.net/repository/maven-releases/"
+            def snapshotsRepoUrl = "https://nexus.jeikobu.net/repository/maven-snapshots/"
+            url version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = group
+            artifactId 'jbase'
+
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
