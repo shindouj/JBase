@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="fatalError">Oh no! A fatal error has occured. This should **never** happen. 
+        \nPlease, contact {0} and pass him these details: {1}</entry>
+    <entry key="authorDiscordName">jeikobu__#2137</entry>
+</properties>

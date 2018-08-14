@@ -1,5 +1,9 @@
 package net.jeikobu.jbase.command;
 
+import io.rincl.Rincled;
+import net.jeikobu.jbase.config.AbstractConfigManager;
+import net.jeikobu.jbase.config.AbstractGuildConfig;
+import org.pmw.tinylog.Logger;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -13,13 +17,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
-public enum CommandManager {
-    INSTANCE;
-
+public class CommandManager implements Rincled {
+    private final AbstractConfigManager configManager;
     private final List<Class<AbstractCommand>> registeredCommands;
 
-    CommandManager() {
+    public CommandManager(AbstractConfigManager configManager) {
+        this.configManager = configManager;
         registeredCommands = new ArrayList<>();
     }
 
@@ -29,10 +34,13 @@ public enum CommandManager {
         else return c;
     }
 
-    private static AbstractCommand createCommandInstance(Class<AbstractCommand> clazz, IGuild destGuild, IChannel destChannel, IUser sender) throws ReflectionException {
+    private static AbstractCommand createCommandInstance(Class<AbstractCommand> clazz, IGuild destGuild,
+                                                         IChannel destChannel, IUser sender, AbstractConfigManager configManager) throws ReflectionException {
         try {
-            Constructor<AbstractCommand> constructor = clazz.getDeclaredConstructor();
-            return constructor.newInstance(destGuild, destChannel, sender);
+            Constructor<AbstractCommand> constructor = clazz.getDeclaredConstructor(IGuild.class, IChannel.class,
+                    IUser.class, AbstractConfigManager.class);
+
+            return constructor.newInstance(destGuild, destChannel, sender, configManager);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ReflectionException(e);
         }
@@ -47,37 +55,63 @@ public enum CommandManager {
     }
 
     @EventSubscriber
-    public void onMessage(MessageEvent e) {
-        IUser sender = e.getAuthor();
-        IChannel destChannel = e.getChannel();
-        IGuild destServer = e.getGuild();
+    public void onMessage(MessageEvent event) {
+        IUser sender = event.getAuthor();
+        IChannel destChannel = event.getChannel();
+        IGuild destGuild = event.getGuild();
+        AbstractGuildConfig destGuildConfig = configManager.getGuildConfig(destGuild);
 
-        String messageString = e.getMessage().getContent();
-        IMessage message = e.getMessage();
+        String commandPrefix;
+        Locale locale;
 
-        if (messageString.length() == 0) return;
+        if (destGuildConfig.getCommandPrefix().isPresent()) {
+            commandPrefix = destGuildConfig.getCommandPrefix().get();
+        } else {
+            commandPrefix = configManager.getGlobalConfig().getDefaultCommandPrefix();
+        }
+
+        if (destGuildConfig.getGuildLocale().isPresent()) {
+            locale = destGuildConfig.getGuildLocale().get();
+        } else {
+            locale = configManager.getGlobalConfig().getGlobalLocale();
+        }
+
+        String messageString = event.getMessage().getContent();
+        IMessage message = event.getMessage();
+
+        if (messageString.length() == 0 || !messageString.startsWith(commandPrefix)) {
+            return;
+        }
+
         List<String> args = Arrays.asList(messageString.split(" "));
-        if (args.size() == 0) return;
+        String suppliedCommandName = args.get(0).substring(commandPrefix.length());
 
-        String suppliedCommandName = args.get(0);
-        String suppliedPrefix = suppliedCommandName.substring(0, 1);
-        suppliedCommandName = suppliedCommandName.substring(1, suppliedCommandName.length());
+        for (Class<AbstractCommand> clazz : registeredCommands) {
+            Command commandAnnotation = getCommandAnnotation(clazz);
+            if (commandAnnotation.name().equals(suppliedCommandName)) {
+                AbstractCommand command;
 
-        for (Class<AbstractCommand> clazz: registeredCommands) {
-            Command c = getCommandAnnotation(clazz);
-            if (c.name().equals(suppliedCommandName)) {
-                if (c.argsLength() < args.size()) {
-                    destChannel.sendMessage("Not enough arguments were provided for this command!");
+                try {
+                    command = createCommandInstance(clazz, destGuild, destChannel, sender, configManager);
+                } catch (ReflectionException e) {
+                    Logger.error(e);
+                    destChannel.sendMessage(getResources(locale).getString("fatalError",
+                            getResources(locale).getString("authorDiscordName"), "ReflectionException"));
+                    return;
+                }
+
+                if (commandAnnotation.argsLength() < args.size()) {
+                    try {
+                        destChannel.sendMessage(command.usageMessage());
+                    } catch (IllegalAccessException e) {
+                        destChannel.sendMessage(getResources(locale).getString("notEnoughArgs"));
+                    }
                     return;
                 } else {
-                    try {
-                        createCommandInstance(clazz, destServer, destChannel, sender).run(message);
-                    } catch (ReflectionException e1) {
-                        e1.printStackTrace();
-                        destChannel.sendMessage("I'm sorry! This should *never* happen. Please, contact my author for details!");
-                    }
+                    command.run(message);
                 }
             }
         }
+
     }
 }
