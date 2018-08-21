@@ -21,23 +21,23 @@ import java.util.Locale;
 
 public class CommandManager implements Rincled {
     private final AbstractConfigManager configManager;
-    private final List<Class<AbstractCommand>> registeredCommands;
+    private final List<Class<? extends AbstractCommand>> registeredCommands;
 
     public CommandManager(AbstractConfigManager configManager) {
         this.configManager = configManager;
         registeredCommands = new ArrayList<>();
     }
 
-    private static Command getCommandAnnotation(Class<AbstractCommand> clazz) {
+    private static Command getCommandAnnotation(Class<? extends AbstractCommand> clazz) {
         Command c = clazz.getAnnotation(Command.class);
         if (c == null) throw new IllegalArgumentException("This class is not correctly annotated!");
         else return c;
     }
 
-    private static AbstractCommand createCommandInstance(Class<AbstractCommand> clazz, IGuild destGuild,
+    private static AbstractCommand createCommandInstance(Class<? extends AbstractCommand> clazz, IGuild destGuild,
                                                          IChannel destChannel, IUser sender, AbstractConfigManager configManager) throws ReflectionException {
         try {
-            Constructor<AbstractCommand> constructor = clazz.getDeclaredConstructor(IGuild.class, IChannel.class,
+            Constructor<? extends AbstractCommand> constructor = clazz.getDeclaredConstructor(IGuild.class, IChannel.class,
                     IUser.class, AbstractConfigManager.class);
 
             return constructor.newInstance(destGuild, destChannel, sender, configManager);
@@ -46,11 +46,11 @@ public class CommandManager implements Rincled {
         }
     }
 
-    public final void registerCommand(Class<AbstractCommand> clazz) {
+    public final void registerCommand(Class<? extends AbstractCommand> clazz) {
         registeredCommands.add(clazz);
     }
 
-    public final void deregisterCommand(Class<AbstractCommand> clazz) {
+    public final void deregisterCommand(Class<? extends AbstractCommand> clazz) {
         registeredCommands.remove(clazz);
     }
 
@@ -86,7 +86,7 @@ public class CommandManager implements Rincled {
         List<String> args = Arrays.asList(messageString.split(" "));
         String suppliedCommandName = args.get(0).substring(commandPrefix.length());
 
-        for (Class<AbstractCommand> clazz : registeredCommands) {
+        for (Class<? extends AbstractCommand> clazz : registeredCommands) {
             Command commandAnnotation = getCommandAnnotation(clazz);
             if (commandAnnotation.name().equals(suppliedCommandName)) {
                 AbstractCommand command;
