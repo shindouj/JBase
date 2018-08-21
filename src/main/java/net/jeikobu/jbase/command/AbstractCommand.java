@@ -13,7 +13,7 @@ public abstract class AbstractCommand implements Rincled {
     private final IUser sendingUser;
     private final AbstractConfigManager configManager;
 
-    private AbstractCommand(final IGuild destinationGuild, final IChannel destinationChannel, final IUser sendingUser,
+    public AbstractCommand(final IGuild destinationGuild, final IChannel destinationChannel, final IUser sendingUser,
                            final AbstractConfigManager configManager) {
         this.destinationGuild = destinationGuild;
         this.destinationChannel = destinationChannel;
