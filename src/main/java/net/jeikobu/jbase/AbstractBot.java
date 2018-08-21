@@ -16,6 +16,8 @@ public abstract class AbstractBot {
         commandManager = new CommandManager(configManager);
         this.configManager = configManager;
 
+        clientBuilder.withToken(configManager.getGlobalConfig().getToken());
+
         client = clientBuilder.build();
         dispatcher = client.getDispatcher();
         dispatcher.registerListener(commandManager);

@@ -29,7 +29,11 @@ class YAMLGlobalConfig : IGlobalConfig {
     }
 
     override fun getDefaultCommandPrefix(): String {
-        return config.getProperty("getDefaultCommandPrefix", String::class.java)
+        return config.getProperty("defaultCommandPrefix", String::class.java)
+    }
+
+    override fun getToken(): String {
+        return config.getProperty("discordToken", String::class.java)
     }
 
     override fun <T : Any?> getValue(key: String, valueType: Class<T>): T {
