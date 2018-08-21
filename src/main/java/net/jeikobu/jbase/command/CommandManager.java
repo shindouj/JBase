@@ -84,7 +84,9 @@ public class CommandManager implements Rincled {
         }
 
         List<String> args = Arrays.asList(messageString.split(" "));
-        String suppliedCommandName = args.get(0).substring(commandPrefix.length());
+
+        if (args.size() < 2) return;
+        String suppliedCommandName = args.get(1);
 
         for (Class<? extends AbstractCommand> clazz : registeredCommands) {
             Command commandAnnotation = getCommandAnnotation(clazz);
@@ -100,7 +102,7 @@ public class CommandManager implements Rincled {
                     return;
                 }
 
-                if (commandAnnotation.argsLength() < args.size()) {
+                if (commandAnnotation.argsLength() + 2 < args.size()) {
                     try {
                         destChannel.sendMessage(command.usageMessage());
                     } catch (IllegalAccessException e) {
