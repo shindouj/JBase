@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.61'
 }
 
 group "net.jeikobu"
@@ -34,6 +35,7 @@ repositories {
     maven {
         url "https://nexus.jeikobu.net/repository/maven-snapshots/"
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -50,7 +52,7 @@ dependencies {
     // optional dependencies for using Spock
     testCompile "org.hamcrest:hamcrest-core:1.3" // only necessary if Hamcrest matchers are used
     testRuntime "net.bytebuddy:byte-buddy:1.6.5"          // allows mocking of classes (in addition to interfaces)
-    testRuntime "org.objenesis:objenesis:2.5.1" // allows mocking of classes without default constructor (together with CGLIB
+    testRuntime "org.objenesis:objenesis:2.5.1"
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
