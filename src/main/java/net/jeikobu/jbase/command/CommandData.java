@@ -5,7 +5,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
-class CommandData {
+public class CommandData {
     final IGuild destinationGuild;
     final IChannel destinationChannel;
     final IUser sendingUser;
