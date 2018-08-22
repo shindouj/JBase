@@ -37,10 +37,9 @@ public class CommandManager implements Rincled {
     private static AbstractCommand createCommandInstance(Class<? extends AbstractCommand> clazz, IGuild destGuild,
                                                          IChannel destChannel, IUser sender, AbstractConfigManager configManager) throws ReflectionException {
         try {
-            Constructor<? extends AbstractCommand> constructor = clazz.getDeclaredConstructor(IGuild.class, IChannel.class,
-                    IUser.class, AbstractConfigManager.class);
+            Constructor<? extends AbstractCommand> constructor = clazz.getDeclaredConstructor(CommandData.class);
 
-            return constructor.newInstance(destGuild, destChannel, sender, configManager);
+            return constructor.newInstance(new CommandData(destGuild, destChannel, sender, configManager));
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ReflectionException(e);
         }
