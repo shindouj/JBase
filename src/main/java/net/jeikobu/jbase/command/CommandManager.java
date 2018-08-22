@@ -101,7 +101,7 @@ public class CommandManager implements Rincled {
                     return;
                 }
 
-                if (commandAnnotation.argsLength() + 2 < args.size()) {
+                if (commandAnnotation.argsLength() + 2 > args.size()) {
                     try {
                         destChannel.sendMessage(command.usageMessage());
                     } catch (IllegalAccessException e) {
