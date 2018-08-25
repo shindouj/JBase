@@ -7,17 +7,21 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
+import java.util.List;
+
 public abstract class AbstractCommand implements Rincled {
-    private final IGuild destinationGuild;
-    private final IChannel destinationChannel;
-    private final IUser sendingUser;
-    private final AbstractConfigManager configManager;
+    protected final IGuild destinationGuild;
+    protected final IChannel destinationChannel;
+    protected final IUser sendingUser;
+    protected final AbstractConfigManager configManager;
+    protected final List<String> args;
 
     public AbstractCommand(CommandData data) {
         this.destinationGuild = data.destinationGuild;
         this.destinationChannel = data.destinationChannel;
         this.sendingUser = data.sendingUser;
         this.configManager = data.configManager;
+        this.args = data.args;
     }
 
     public IGuild getDestinationGuild() {

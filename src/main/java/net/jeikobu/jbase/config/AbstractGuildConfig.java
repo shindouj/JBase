@@ -15,4 +15,11 @@ public abstract class AbstractGuildConfig {
 
     public abstract Optional<Locale> getGuildLocale();
     public abstract void             setGuildLocale(Locale locale);
+
+    public abstract <T> Optional<T>  getValue(String key, String defaultValue, Class<T> valueType);
+    public abstract void             setValue(String key, String value);
+
+    public <T> Optional<T> getValue(String key, Class<T> valueType) {
+        return getValue(key, null, valueType);
+    }
 }

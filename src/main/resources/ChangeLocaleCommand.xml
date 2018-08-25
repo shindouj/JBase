@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="localeCommand.badLocaleFormat">
+        You have used a wrong format for your locale. A correct format looks like this:
+        `en_US`, `pl_PL` etc.
+    </entry>
+    <entry key="localeCommand.changeSuccessful">
+        You have successfully changed language to English!
+    </entry>
+</properties>

@@ -21,21 +21,8 @@ sourceCompatibility = 1.8
 
 repositories {
     maven {
-        url "https://nexus.jeikobu.net/repository/maven-central/"
+        url "https://nexus.jeikobu.net/repository/maven-repositories/"
     }
-
-    maven {
-        url "https://nexus.jeikobu.net/repository/jcenter-proxy/"
-    }
-
-    maven {
-        url "https://nexus.jeikobu.net/repository/maven-releases/"
-    }
-
-    maven {
-        url "https://nexus.jeikobu.net/repository/maven-snapshots/"
-    }
-    mavenCentral()
 }
 
 dependencies {
@@ -53,12 +40,17 @@ dependencies {
 
     // compile-time dependencies
 
+    // HikariCP
+    compile "com.zaxxer:HikariCP:2.7.8"
+
     // cfg4j
     compile "org.cfg4j:cfg4j-core:4.4.0"
 
-    // jOOQ and jOOR
-    compile "org.jooq:jooq:3.11.4"
-    compile "org.jooq:joor-java-8:0.9.7"
+    // Exposed
+    compile 'org.jetbrains.exposed:exposed:0.10.4'
+
+    // joda-convert
+    compile 'org.joda:joda-convert:2.1.1'
 
     // Google Guava
     compile 'com.google.guava:guava:26.0-jre'

@@ -4,4 +4,5 @@
     <entry key="fatalError">Oh no! A fatal error has occured. This should **never** happen. 
         \nPlease, contact {0} and pass him these details: {1}</entry>
     <entry key="authorDiscordName">jeikobu__#2137</entry>
+    <entry key="notEnoughArgs">You have used too little arguments for this command.</entry>
 </properties>

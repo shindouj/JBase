@@ -30,16 +30,21 @@ public class CommandManager implements Rincled {
 
     private static Command getCommandAnnotation(Class<? extends AbstractCommand> clazz) {
         Command c = clazz.getAnnotation(Command.class);
-        if (c == null) throw new IllegalArgumentException("This class is not correctly annotated!");
-        else return c;
+        if (c == null) {
+            throw new IllegalArgumentException("This class is not correctly annotated!");
+        } else {
+            return c;
+        }
     }
 
     private static AbstractCommand createCommandInstance(Class<? extends AbstractCommand> clazz, IGuild destGuild,
-                                                         IChannel destChannel, IUser sender, AbstractConfigManager configManager) throws ReflectionException {
+                                                         IChannel destChannel, IUser sender,
+                                                         AbstractConfigManager configManager,
+                                                         List<String> args) throws ReflectionException {
         try {
             Constructor<? extends AbstractCommand> constructor = clazz.getDeclaredConstructor(CommandData.class);
 
-            return constructor.newInstance(new CommandData(destGuild, destChannel, sender, configManager));
+            return constructor.newInstance(new CommandData(destGuild, destChannel, sender, configManager, args));
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ReflectionException(e);
         }
@@ -84,7 +89,9 @@ public class CommandManager implements Rincled {
 
         List<String> args = Arrays.asList(messageString.split(" "));
 
-        if (args.size() < 2) return;
+        if (args.size() < 2) {
+            return;
+        }
         String suppliedCommandName = args.get(1);
 
         for (Class<? extends AbstractCommand> clazz : registeredCommands) {
@@ -93,11 +100,12 @@ public class CommandManager implements Rincled {
                 AbstractCommand command;
 
                 try {
-                    command = createCommandInstance(clazz, destGuild, destChannel, sender, configManager);
+                    command = createCommandInstance(clazz, destGuild, destChannel, sender, configManager,
+                                                    args.subList(2, args.size()));
                 } catch (ReflectionException e) {
                     Logger.error(e);
-                    destChannel.sendMessage(getResources(locale).getString("fatalError",
-                            getResources(locale).getString("authorDiscordName"), "ReflectionException"));
+                    destChannel.sendMessage(getResources(locale).getString("fatalError", getResources(locale)
+                            .getString("authorDiscordName"), "ReflectionException"));
                     return;
                 }
 
