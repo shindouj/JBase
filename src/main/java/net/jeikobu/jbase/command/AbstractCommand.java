@@ -1,6 +1,6 @@
 package net.jeikobu.jbase.command;
 
-import io.rincl.Rincled;
+import net.jeikobu.jbase.Localized;
 import net.jeikobu.jbase.config.AbstractConfigManager;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
@@ -8,8 +8,9 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.List;
+import java.util.Locale;
 
-public abstract class AbstractCommand implements Rincled {
+public abstract class AbstractCommand extends Localized {
     protected final IGuild destinationGuild;
     protected final IChannel destinationChannel;
     protected final IUser sendingUser;
@@ -38,6 +39,11 @@ public abstract class AbstractCommand implements Rincled {
 
     public String usageMessage() throws IllegalAccessException {
         throw new IllegalAccessException("This method is not overridden!");
+    }
+
+    public String getLocalized(String key) {
+        Locale locale = configManager.getLocale(destinationGuild);
+        return getLocalized(key, locale);
     }
 
     public abstract void run(IMessage message);

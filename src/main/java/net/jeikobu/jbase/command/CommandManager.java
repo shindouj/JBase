@@ -1,6 +1,6 @@
 package net.jeikobu.jbase.command;
 
-import io.rincl.Rincled;
+import net.jeikobu.jbase.Localized;
 import net.jeikobu.jbase.config.AbstractConfigManager;
 import net.jeikobu.jbase.config.AbstractGuildConfig;
 import org.pmw.tinylog.Logger;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class CommandManager implements Rincled {
+public class CommandManager extends Localized {
     private final AbstractConfigManager configManager;
     private final List<Class<? extends AbstractCommand>> registeredCommands;
 
@@ -104,8 +104,7 @@ public class CommandManager implements Rincled {
                                                     args.subList(2, args.size()));
                 } catch (ReflectionException e) {
                     Logger.error(e);
-                    destChannel.sendMessage(getResources(locale).getString("fatalError", getResources(locale)
-                            .getString("authorDiscordName"), "ReflectionException"));
+                    destChannel.sendMessage(getLocalized("fatalError", locale));
                     return;
                 }
 
@@ -113,7 +112,7 @@ public class CommandManager implements Rincled {
                     try {
                         destChannel.sendMessage(command.usageMessage());
                     } catch (IllegalAccessException e) {
-                        destChannel.sendMessage(getResources(locale).getString("notEnoughArgs"));
+                        destChannel.sendMessage(getLocalized("notEnoughArgs", locale));
                     }
                     return;
                 } else {
