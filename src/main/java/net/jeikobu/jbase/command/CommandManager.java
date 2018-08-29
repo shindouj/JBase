@@ -3,6 +3,7 @@ package net.jeikobu.jbase.command;
 import net.jeikobu.jbase.Localized;
 import net.jeikobu.jbase.config.AbstractConfigManager;
 import net.jeikobu.jbase.config.AbstractGuildConfig;
+import net.jeikobu.jbase.impl.commands.ChangeLocaleCommand;
 import org.pmw.tinylog.Logger;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageEvent;
@@ -26,6 +27,8 @@ public class CommandManager extends Localized {
     public CommandManager(AbstractConfigManager configManager) {
         this.configManager = configManager;
         registeredCommands = new ArrayList<>();
+
+        registeredCommands.add(ChangeLocaleCommand.class);
     }
 
     private static Command getCommandAnnotation(Class<? extends AbstractCommand> clazz) {
