@@ -24,6 +24,6 @@ class ChangeLocaleCommand(data: CommandData) : AbstractCommand(data) {
     }
 
     override fun usageMessage(): String {
-        return getLocalized("localeCommand.usage")
+        return getLocalized("localeCommand.usage", configManager.getCommandPrefix(destinationGuild))
     }
 }

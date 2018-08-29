@@ -14,6 +14,6 @@ class ChangePrefixCommand(data: CommandData) : AbstractCommand(data) {
     }
 
     override fun usageMessage(): String {
-        return getLocalized("usage")
+        return getLocalized("usage", configManager.getCommandPrefix(destinationGuild))
     }
 }

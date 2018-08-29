@@ -99,7 +99,7 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
         transaction(db) {
             create(GuildKVConfig)
 
-            GuildKVConfig.insertOrUpdate(   GuildKVConfig.value) {
+            GuildKVConfig.insertOrUpdate(GuildKVConfig.value) {
                 it[GuildKVConfig.guildID] = this@DBGuildConfig.guildID
                 it[GuildKVConfig.key] = key
                 it[GuildKVConfig.value] = value
