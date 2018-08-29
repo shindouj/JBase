@@ -2,8 +2,6 @@ package net.jeikobu.jbase.command;
 
 import net.jeikobu.jbase.Localized;
 import net.jeikobu.jbase.config.AbstractConfigManager;
-import net.jeikobu.jbase.config.AbstractGuildConfig;
-import net.jeikobu.jbase.impl.commands.ChangeLocaleCommand;
 import org.pmw.tinylog.Logger;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageEvent;
@@ -15,10 +13,7 @@ import sx.blah.discord.handle.obj.IUser;
 import javax.management.ReflectionException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class CommandManager extends Localized {
     private final AbstractConfigManager configManager;
@@ -27,8 +22,6 @@ public class CommandManager extends Localized {
     public CommandManager(AbstractConfigManager configManager) {
         this.configManager = configManager;
         registeredCommands = new ArrayList<>();
-
-        registeredCommands.add(ChangeLocaleCommand.class);
     }
 
     private static Command getCommandAnnotation(Class<? extends AbstractCommand> clazz) {
@@ -61,27 +54,22 @@ public class CommandManager extends Localized {
         registeredCommands.remove(clazz);
     }
 
+    public final void registerAll(Collection<Class<? extends AbstractCommand>> classCollection) {
+        registeredCommands.addAll(classCollection);
+    }
+
+    public final void deregisterAll(Collection<Class<? extends AbstractCommand>> classCollection) {
+        registeredCommands.removeAll(classCollection);
+    }
+
     @EventSubscriber
     public void onMessage(MessageEvent event) {
         IUser sender = event.getAuthor();
         IChannel destChannel = event.getChannel();
         IGuild destGuild = event.getGuild();
-        AbstractGuildConfig destGuildConfig = configManager.getGuildConfig(destGuild);
 
-        String commandPrefix;
-        Locale locale;
-
-        if (destGuildConfig.getCommandPrefix().isPresent()) {
-            commandPrefix = destGuildConfig.getCommandPrefix().get();
-        } else {
-            commandPrefix = configManager.getGlobalConfig().getDefaultCommandPrefix();
-        }
-
-        if (destGuildConfig.getGuildLocale().isPresent()) {
-            locale = destGuildConfig.getGuildLocale().get();
-        } else {
-            locale = configManager.getGlobalConfig().getGlobalLocale();
-        }
+        String commandPrefix = configManager.getCommandPrefix(destGuild);
+        Locale locale = configManager.getLocale(destGuild);
 
         String messageString = event.getMessage().getContent();
         IMessage message = event.getMessage();
@@ -100,6 +88,13 @@ public class CommandManager extends Localized {
         for (Class<? extends AbstractCommand> clazz : registeredCommands) {
             Command commandAnnotation = getCommandAnnotation(clazz);
             if (commandAnnotation.name().equals(suppliedCommandName)) {
+
+                if (!sender.getPermissionsForGuild(destGuild)
+                           .containsAll(Arrays.asList(commandAnnotation.permissions()))) {
+                    destChannel.sendMessage(getLocalized(locale, "insufficientPermissions"));
+                    return;
+                }
+
                 AbstractCommand command;
 
                 try {
@@ -107,7 +102,7 @@ public class CommandManager extends Localized {
                                                     args.subList(2, args.size()));
                 } catch (ReflectionException e) {
                     Logger.error(e);
-                    destChannel.sendMessage(getLocalized("fatalError", locale));
+                    destChannel.sendMessage(getLocalized(locale, "fatalError"));
                     return;
                 }
 
@@ -115,7 +110,7 @@ public class CommandManager extends Localized {
                     try {
                         destChannel.sendMessage(command.usageMessage());
                     } catch (IllegalAccessException e) {
-                        destChannel.sendMessage(getLocalized("notEnoughArgs", locale));
+                        destChannel.sendMessage(getLocalized(locale, "notEnoughArgs"));
                     }
                     return;
                 } else {

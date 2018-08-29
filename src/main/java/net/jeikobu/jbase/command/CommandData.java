@@ -6,7 +6,6 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommandData {
     final IGuild destinationGuild;

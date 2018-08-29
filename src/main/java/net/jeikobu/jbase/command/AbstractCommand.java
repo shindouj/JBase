@@ -43,7 +43,12 @@ public abstract class AbstractCommand extends Localized {
 
     public String getLocalized(String key) {
         Locale locale = configManager.getLocale(destinationGuild);
-        return getLocalized(key, locale);
+        return getLocalized(locale, key);
+    }
+
+    public String getLocalized(String key, Object... elements) {
+        Locale locale = configManager.getLocale(destinationGuild);
+        return getLocalized(locale, key, elements);
     }
 
     public abstract void run(IMessage message);

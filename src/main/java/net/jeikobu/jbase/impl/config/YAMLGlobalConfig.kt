@@ -39,6 +39,10 @@ class YAMLGlobalConfig : IGlobalConfig {
         return config.getProperty("discordToken", String::class.java)
     }
 
+    override fun useDefaultCommands(): Boolean {
+        return config.getProperty("useDefaultCommands", Boolean::class.java) ?: true
+    }
+
     override fun <T : Any?> getValue(key: String, valueType: Class<T>): T {
         return config.getProperty(key, valueType)
     }

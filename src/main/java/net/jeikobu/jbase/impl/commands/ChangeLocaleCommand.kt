@@ -6,14 +6,15 @@ import net.jeikobu.jbase.command.CommandData
 import org.joda.convert.StringConvert
 import org.pmw.tinylog.Logger
 import sx.blah.discord.handle.obj.IMessage
+import sx.blah.discord.handle.obj.Permissions
 import java.lang.RuntimeException
 import java.util.*
 
-@Command(name = "changeLocale", argsLength = 1)
+@Command(name = "changeLocale", argsLength = 1, permissions = [Permissions.ADMINISTRATOR])
 class ChangeLocaleCommand(data: CommandData) : AbstractCommand(data) {
     override fun run(message: IMessage?) {
         try {
-            val locale = StringConvert.INSTANCE.convertFromString(Locale::class.java, args[0])
+            val locale = Locale(args[0])
             configManager.getGuildConfig(destinationGuild).setGuildLocale(locale)
             destinationChannel.sendMessage(getLocalized("localeCommand.changeSuccessful", locale))
         } catch (e: RuntimeException) {

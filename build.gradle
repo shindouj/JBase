@@ -40,9 +40,6 @@ dependencies {
     // temp
     runtime 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
 
-    // HikariCP
-    compile "com.zaxxer:HikariCP:2.7.8"
-
     // cfg4j
     compile "org.cfg4j:cfg4j-core:4.4.0"
 

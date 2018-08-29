@@ -1,7 +1,5 @@
 package net.jeikobu.jbase.impl.config
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import net.jeikobu.jbase.config.AbstractGuildConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
