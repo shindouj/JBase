@@ -60,7 +60,7 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
         }
 
         if (defaultValue == null) {
-            Logger.error("(GuildConfig.Get) No default value supplied for key = {}, returned value might be empty", key)
+            Logger.trace("(GuildConfig.Get) No default value supplied for key = {}, returned value might be empty", key)
         }
 
         val result: String? = transaction(db) {
@@ -71,7 +71,7 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
             try {
                 return@transaction query.first()[GuildKVConfig.value]
             } catch (e: NoSuchElementException) {
-                Logger.error("(GuildConfig) Key '{}' not found, falling back to default value", key)
+                Logger.warn("(GuildConfig) Key '{}' not found, falling back to default value", key)
                 return@transaction null
             }
         }
@@ -99,7 +99,7 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
         transaction(db) {
             create(GuildKVConfig)
 
-            GuildKVConfig.insertOrUpdate(GuildKVConfig.value) {
+            GuildKVConfig.insertOrUpdate(   GuildKVConfig.value) {
                 it[GuildKVConfig.guildID] = this@DBGuildConfig.guildID
                 it[GuildKVConfig.key] = key
                 it[GuildKVConfig.value] = value
@@ -111,6 +111,10 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
         val guildID = long("guildID").primaryKey(0)
         val key = varchar("key", 32).primaryKey(1)
         val value = varchar("value", 1024)
+
+        init {
+            index(true, guildID, key) // case 1 - Unique index
+        }
     }
 }
 
