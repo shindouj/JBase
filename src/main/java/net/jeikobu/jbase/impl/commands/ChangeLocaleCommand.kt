@@ -3,7 +3,6 @@ package net.jeikobu.jbase.impl.commands
 import net.jeikobu.jbase.command.AbstractCommand
 import net.jeikobu.jbase.command.Command
 import net.jeikobu.jbase.command.CommandData
-import org.joda.convert.StringConvert
 import org.pmw.tinylog.Logger
 import sx.blah.discord.handle.obj.IMessage
 import sx.blah.discord.handle.obj.Permissions

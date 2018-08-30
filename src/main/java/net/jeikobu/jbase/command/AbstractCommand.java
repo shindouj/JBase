@@ -2,6 +2,8 @@ package net.jeikobu.jbase.command;
 
 import net.jeikobu.jbase.Localized;
 import net.jeikobu.jbase.config.AbstractConfigManager;
+import net.jeikobu.jbase.config.AbstractGuildConfig;
+import net.jeikobu.jbase.config.IGlobalConfig;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
@@ -39,6 +41,14 @@ public abstract class AbstractCommand extends Localized {
 
     public String usageMessage() throws IllegalAccessException {
         throw new IllegalAccessException("This method is not overridden!");
+    }
+
+    public IGlobalConfig getGlobalConfig() {
+        return configManager.getGlobalConfig();
+    }
+
+    public AbstractGuildConfig getGuildConfig() {
+        return configManager.getGuildConfig(destinationGuild);
     }
 
     public String getLocalized(String key) {
