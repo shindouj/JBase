@@ -15,7 +15,7 @@ class YAMLGlobalConfig : IGlobalConfig {
     private val config: ConfigurationProvider
 
     init {
-        val configFilesProvider = ConfigFilesProvider {mutableListOf(Paths.get("global.config.yml"))}
+        val configFilesProvider = ConfigFilesProvider {mutableListOf(Paths.get("config/global.config.yml"))}
         val configSource = FilesConfigurationSource(configFilesProvider)
         val reloadStrategy = PeriodicalReloadStrategy(5, TimeUnit.SECONDS)
         val environment = ImmutableEnvironment("./")
