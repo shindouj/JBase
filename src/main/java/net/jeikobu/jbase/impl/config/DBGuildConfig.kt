@@ -71,7 +71,6 @@ class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : Abstrac
             try {
                 return@transaction query.first()[GuildKVConfig.value]
             } catch (e: NoSuchElementException) {
-                Logger.warn("(GuildConfig) Key '{}' not found, falling back to default value", key)
                 return@transaction null
             }
         }
