@@ -11,7 +11,7 @@ import java.util.*
 
 @Command(name = "changeLocale", argsLength = 1, permissions = [Permissions.ADMINISTRATOR])
 class ChangeLocaleCommand(data: CommandData) : AbstractCommand(data) {
-    override fun run(message: IMessage?) {
+    override fun run(message: IMessage) {
         try {
             val locale = Locale(args[0])
             configManager.getGuildConfig(destinationGuild).setGuildLocale(locale)

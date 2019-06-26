@@ -8,7 +8,7 @@ import sx.blah.discord.handle.obj.Permissions
 
 @Command(name = "changePrefix", argsLength = 1, permissions = [Permissions.ADMINISTRATOR])
 class ChangePrefixCommand(data: CommandData) : AbstractCommand(data) {
-    override fun run(message: IMessage?) {
+    override fun run(message: IMessage) {
         configManager.getGuildConfig(destinationGuild).setCommandPrefix(args[0])
         destinationChannel.sendMessage(getLocalized("success", args[0]))
     }
