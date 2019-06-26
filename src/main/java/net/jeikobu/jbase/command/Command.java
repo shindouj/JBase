@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
     String name();
+    String[] aliases() default {};
     int argsLength() default 0;
     Permissions[] permissions() default Permissions.SEND_MESSAGES;
 }
