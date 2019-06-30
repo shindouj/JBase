@@ -1,5 +1,6 @@
 package net.jeikobu.jbase.impl.config
 
+import net.dv8tion.jda.core.entities.Guild
 import net.jeikobu.jbase.config.AbstractGuildConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -9,20 +10,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.vendors.DatabaseDialect
 import org.joda.convert.StringConvert
 import org.pmw.tinylog.Logger
-import sx.blah.discord.handle.obj.IGuild
 import java.lang.RuntimeException
 import java.util.*
 import javax.sql.DataSource
 import kotlin.NoSuchElementException
 import kotlin.reflect.full.createInstance
 
-class DBGuildConfig(private val guild: IGuild, dataSource: DataSource) : AbstractGuildConfig(guild) {
+class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : AbstractGuildConfig(guild) {
     private val db by lazy {
         Database.connect(dataSource)
     }
 
     private val guildID by lazy {
-        guild.longID
+        guild.idLong
     }
 
     init {

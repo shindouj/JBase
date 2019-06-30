@@ -1,18 +1,15 @@
 package net.jeikobu.jbase.command
 
+import net.dv8tion.jda.core.entities.*
 import net.jeikobu.jbase.Localized
 import net.jeikobu.jbase.config.AbstractConfigManager
 import net.jeikobu.jbase.config.AbstractGuildConfig
 import net.jeikobu.jbase.config.IGlobalConfig
-import sx.blah.discord.handle.obj.IChannel
-import sx.blah.discord.handle.obj.IGuild
-import sx.blah.discord.handle.obj.IMessage
-import sx.blah.discord.handle.obj.IUser
 
 abstract class AbstractCommand(commandData: CommandData) : Localized() {
-    protected val destinationGuild: IGuild = commandData.destinationGuild
-    protected val destinationChannel: IChannel = commandData.destinationChannel
-    protected val sendingUser: IUser = commandData.sendingUser
+    protected val destinationGuild: Guild = commandData.destinationGuild
+    protected val destinationChannel: TextChannel = commandData.destinationChannel
+    protected val sendingUser: Member = commandData.sendingUser
     protected val configManager: AbstractConfigManager = commandData.configManager
     protected val args: List<String> = commandData.args
 
@@ -33,5 +30,5 @@ abstract class AbstractCommand(commandData: CommandData) : Localized() {
         throw IllegalAccessException("Unimplemented")
     }
 
-    abstract fun run(message: IMessage)
+    abstract fun run(message: Message)
 }
