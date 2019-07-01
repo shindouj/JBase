@@ -1,12 +1,12 @@
 package net.jeikobu.jbase.config;
 
-import sx.blah.discord.handle.obj.IGuild;
+import net.dv8tion.jda.core.entities.Guild;
 
 import java.util.Locale;
 import java.util.Optional;
 
 public abstract class AbstractGuildConfig {
-    public AbstractGuildConfig(IGuild guild) {
+    public AbstractGuildConfig(Guild guild) {
 
     }
 

@@ -2,22 +2,33 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.11'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.40'
+}
+
+ext.getCurrentBranchName = {
+    new ByteArrayOutputStream().withStream { os ->
+        exec {
+            executable = "git"
+            args = ["rev-parse", "--abbrev-ref", "HEAD"]
+            standardOutput = os
+        }
+        return os.toString().trim()
+    }
 }
 
 group "net.jeikobu"
 
-def releaseNumber = "1.0"
-def isSnapshot = true
-
-version = releaseNumber
-if (isSnapshot) version = version + "-SNAPSHOT"
+def releaseNumber = "1.1"
+def isSnapshot = !getCurrentBranchName().equals("master")
 
 def buildNumber = "LOCAL_DEV_BUILD"
 if (project.hasProperty("teamcity")) {
     buildNumber = teamcity["build.number"]
     println "##teamcity[buildNumber '" + version + "-" + buildNumber + "']"
 }
+
+version = releaseNumber
+if (isSnapshot) version = version + "-SNAPSHOT"
 
 sourceCompatibility = 1.8
 
@@ -30,8 +41,8 @@ repositories {
 dependencies {
     // transient dependencies
 
-    // Discord4J
-    implementation 'com.discord4j:Discord4J:2.10.1'
+    // Javacord
+    implementation 'net.dv8tion:JDA:3.8.3_464'
 
     // Tinylog
     implementation 'org.tinylog:tinylog:1.3.5'
