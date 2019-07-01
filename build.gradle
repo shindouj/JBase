@@ -16,7 +16,7 @@ if (isSnapshot) version = version + "-SNAPSHOT"
 def buildNumber = "LOCAL_DEV_BUILD"
 if (project.hasProperty("teamcity")) {
     buildNumber = teamcity["build.number"]
-    teamcity["build.number"] = version + "-" + buildNumber
+    println "##teamcity[buildNumber '" + version + "-" + buildNumber + "']"
 }
 
 sourceCompatibility = 1.8
