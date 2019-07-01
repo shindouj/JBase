@@ -2,20 +2,32 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.11'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.40'
+}
+
+ext.getCurrentBranchName = {
+    new ByteArrayOutputStream().withStream { os ->
+        exec {
+            executable = "git"
+            args = ["rev-parse", "--abbrev-ref", "HEAD"]
+            standardOutput = os
+        }
+        return os.toString().trim()
+    }
 }
 
 group "net.jeikobu"
 
-def releaseNumber = "1.0"
-def isSnapshot = true
+def releaseNumber = "1.1"
+def isSnapshot = !getCurrentBranchName().equals("master")
+
+def buildNumber = "LOCAL_DEV_BUILD"
+if (project.hasProperty("teamcity")) {
+    buildNumber = teamcity["build.number"]
+}
 
 version = releaseNumber
 if (isSnapshot) version = version + "-SNAPSHOT"
-
-def buildNumber = "LOCAL_DEV_BUILD"
-if (project.hasProperty("teamcity"))
-    buildNumber = teamcity["build.number"]
 
 sourceCompatibility = 1.8
 
