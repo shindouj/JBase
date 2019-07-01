@@ -12,6 +12,15 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class YAMLGlobalConfig : IGlobalConfig {
+    override val defaultCommandPrefix: String
+        get() = config.getProperty("defaultCommandPrefix", String::class.java)
+    override val token: String
+        get() = config.getProperty("discordToken", String::class.java)
+    override val useDefaultCommands: Boolean
+        get() = config.getProperty("useDefaultCommands", Boolean::class.java) ?: true
+    override val globalLocale: Locale
+        get() = config.getProperty("locale", Locale::class.java)
+
     private val config: ConfigurationProvider
 
     init {
@@ -25,22 +34,6 @@ class YAMLGlobalConfig : IGlobalConfig {
                 .withReloadStrategy(reloadStrategy)
                 .withEnvironment(environment)
                 .build()
-    }
-
-    override fun getGlobalLocale(): Locale {
-        return config.getProperty("locale", Locale::class.java)
-    }
-
-    override fun getDefaultCommandPrefix(): String {
-        return config.getProperty("defaultCommandPrefix", String::class.java)
-    }
-
-    override fun getToken(): String {
-        return config.getProperty("discordToken", String::class.java)
-    }
-
-    override fun useDefaultCommands(): Boolean {
-        return config.getProperty("useDefaultCommands", Boolean::class.java) ?: true
     }
 
     override fun <T : Any?> getValue(key: String, valueType: Class<T>): T {
