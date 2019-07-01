@@ -21,14 +21,14 @@ group "net.jeikobu"
 def releaseNumber = "1.1"
 def isSnapshot = !getCurrentBranchName().equals("master")
 
+version = releaseNumber
+if (isSnapshot) version = version + "-SNAPSHOT"
+
 def buildNumber = "LOCAL_DEV_BUILD"
 if (project.hasProperty("teamcity")) {
     buildNumber = teamcity["build.number"]
     println "##teamcity[buildNumber '" + version + "-" + buildNumber + "']"
 }
-
-version = releaseNumber
-if (isSnapshot) version = version + "-SNAPSHOT"
 
 sourceCompatibility = 1.8
 
