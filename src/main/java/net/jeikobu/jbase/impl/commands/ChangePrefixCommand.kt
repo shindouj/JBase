@@ -1,14 +1,14 @@
 package net.jeikobu.jbase.impl.commands
 
+import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.Message
 import net.jeikobu.jbase.command.AbstractCommand
 import net.jeikobu.jbase.command.Command
 import net.jeikobu.jbase.command.CommandData
-import sx.blah.discord.handle.obj.IMessage
-import sx.blah.discord.handle.obj.Permissions
 
-@Command(name = "changePrefix", argsLength = 1, permissions = [Permissions.ADMINISTRATOR])
+@Command(name = "changePrefix", argsLength = 1, permissions = [Permission.ADMINISTRATOR])
 class ChangePrefixCommand(data: CommandData) : AbstractCommand(data) {
-    override fun run(message: IMessage?) {
+    override fun run(message: Message) {
         configManager.getGuildConfig(destinationGuild).setCommandPrefix(args[0])
         destinationChannel.sendMessage(getLocalized("success", args[0]))
     }
