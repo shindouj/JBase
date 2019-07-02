@@ -10,9 +10,11 @@ import net.jeikobu.jbase.impl.commands.ChangePrefixCommand
 import java.util.*
 import kotlin.reflect.KClass
 
-abstract class AbstractBot(clientBuilder: JDABuilder, configManager: AbstractConfigManager) {
+abstract class AbstractBot(configManager: AbstractConfigManager) {
     protected val defaultCommands: MutableList<KClass<out AbstractCommand>> = Arrays.asList(ChangeLocaleCommand::class, ChangePrefixCommand::class)
     protected val commandManager = CommandManager(configManager)
+    private val clientBuilder = JDABuilder()
+
     val client: JDA
 
     init {
