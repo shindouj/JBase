@@ -9,11 +9,7 @@ abstract class AbstractConfigManager {
 
     abstract val globalConfig: IGlobalConfig
 
-    fun getGuildConfig(guild: Guild): AbstractGuildConfig {
-        return getGuildConfig(guild, globalConfig)
-    }
-
-    protected abstract fun getGuildConfig(guild: Guild, globalConfig: IGlobalConfig): AbstractGuildConfig
+    protected abstract fun getGuildConfig(guild: Guild): AbstractGuildConfig
 
     fun getLocale(guild: Guild): Locale {
         return getGuildConfig(guild).guildLocale ?: globalConfig.globalLocale
