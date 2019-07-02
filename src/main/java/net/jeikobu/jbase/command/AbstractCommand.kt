@@ -23,7 +23,7 @@ abstract class AbstractCommand(commandData: CommandData) : Localized() {
     fun setVolatile(key: String, value: String) = configManager.volatileStorage.set(destinationGuild, key, value)
 
     fun getLocalized(key: String) = getLocalized(configManager.getLocale(destinationGuild), key)
-    fun getLocalized(key: String, vararg elements: Any) = getLocalized(configManager.getLocale(destinationGuild), key, elements)
+    fun getLocalized(key: String, vararg elements: Any) = getLocalized(configManager.getLocale(destinationGuild), key, *elements)
 
     @Throws(IllegalAccessException::class)
     open fun usageMessage(): String {
