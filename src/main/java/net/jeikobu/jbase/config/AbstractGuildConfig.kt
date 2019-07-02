@@ -5,7 +5,7 @@ import org.joda.convert.StringConvert
 import java.util.*
 import kotlin.reflect.KClass
 
-abstract class AbstractGuildConfig(protected val guild: Guild) {
+abstract class AbstractGuildConfig(val guild: Guild) {
     abstract var commandPrefix: String?
     abstract var guildLocale: Locale?
 
