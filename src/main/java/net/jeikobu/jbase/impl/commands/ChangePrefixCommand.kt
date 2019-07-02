@@ -9,7 +9,7 @@ import net.jeikobu.jbase.command.CommandData
 @Command(name = "changePrefix", argsLength = 1, permissions = [Permission.ADMINISTRATOR])
 class ChangePrefixCommand(data: CommandData) : AbstractCommand(data) {
     override fun run(message: Message) {
-        configManager.getGuildConfig(destinationGuild).setCommandPrefix(args[0])
+        configManager.getGuildConfig(destinationGuild).commandPrefix = args[0]
         destinationChannel.sendMessage(getLocalized("success", args[0]))
     }
 

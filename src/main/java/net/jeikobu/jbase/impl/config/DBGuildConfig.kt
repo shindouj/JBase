@@ -2,6 +2,7 @@ package net.jeikobu.jbase.impl.config
 
 import net.dv8tion.jda.core.entities.Guild
 import net.jeikobu.jbase.config.AbstractGuildConfig
+import net.jeikobu.jbase.config.IGlobalConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -14,9 +15,21 @@ import java.lang.RuntimeException
 import java.util.*
 import javax.sql.DataSource
 import kotlin.NoSuchElementException
+import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : AbstractGuildConfig(guild) {
+class DBGuildConfig(guild: Guild, dataSource: DataSource) : AbstractGuildConfig(guild) {
+    private val commandPrefixKey = "commandPrefix"
+    private val guildLocaleKey   = "guildLocale"
+
+    override var commandPrefix: String?
+        get() = getValue(commandPrefixKey)
+        set(value) = setValue(commandPrefixKey, requireNotNull(value))
+
+    override var guildLocale: Locale?
+        get() = getValue(guildLocaleKey)
+        set(value) = setValue(guildLocaleKey, StringConvert.INSTANCE.convertToString(requireNotNull(value)))
+
     private val db by lazy {
         Database.connect(dataSource)
     }
@@ -27,38 +40,13 @@ class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : Abstract
 
     init {
         Database.registerDialect("mariadb") {
-            @Suppress("UNCHECKED_CAST")
-            val type = (Class.forName("org.jetbrains.exposed.sql.vendors.MysqlDialect") as Class<DatabaseDialect>).kotlin
+            @Suppress("UNCHECKED_CAST") val type = (Class.forName(
+                "org.jetbrains.exposed.sql.vendors.MysqlDialect") as Class<DatabaseDialect>).kotlin
             type.createInstance()
         }
     }
 
-    override fun getCommandPrefix(): Optional<String> {
-        return getValue("commandPrefix", String::class.java)
-    }
-
-    override fun setCommandPrefix(prefix: String?) {
-        return setValue("commandPrefix", requireNotNull(prefix))
-    }
-
-    override fun getGuildLocale(): Optional<Locale> {
-        return getValue("guildLocale", Locale::class.java)
-    }
-
-    override fun setGuildLocale(locale: Locale?) {
-        val strLocale = StringConvert.INSTANCE.convertToString(requireNotNull(locale))
-        return setValue("guildLocale", strLocale)
-    }
-
-    override fun <T : Any?> getValue(key: String?, defaultValue: String?, valueType: Class<T>?): Optional<T> {
-        if (key == null) {
-            throw IllegalArgumentException("(GuildConfig.Get) Key must not be null!")
-        }
-
-        if (valueType == null) {
-            throw IllegalArgumentException("(GuildConfig.Get) Value type must not be null!")
-        }
-
+    override fun <T : Any> getValue(key: String, defaultValue: String?, valueType: KClass<T>): T? {
         if (defaultValue == null) {
             Logger.trace("(GuildConfig.Get) No default value supplied for key = {}, returned value might be empty", key)
         }
@@ -76,25 +64,15 @@ class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : Abstract
         }
 
         return try {
-            val convertedValue = StringConvert.INSTANCE.convertFromString(valueType, result)
-                    ?: StringConvert.INSTANCE.convertFromString(valueType, defaultValue)
-
-            Optional.ofNullable(convertedValue)
+            StringConvert.INSTANCE.convertFromString(valueType.java, result)
+                    ?: StringConvert.INSTANCE.convertFromString(valueType.java, defaultValue)
         } catch (e: RuntimeException) {
             Logger.error(e, "(GuildConfig) Error during conversion")
-            Optional.empty()
+            null
         }
     }
 
-    override fun setValue(key: String?, value: String?) {
-        if (key == null) {
-            throw IllegalArgumentException("(GuildConfig.Set) Key must not be null!")
-        }
-
-        if (value == null) {
-            throw IllegalArgumentException("(GuildConfig.Set) Value must not be null!")
-        }
-
+    override fun setValue(key: String, value: String) {
         transaction(db) {
             create(GuildKVConfig)
 
@@ -118,7 +96,8 @@ class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : Abstract
 }
 
 fun <T : Table> T.insertOrUpdate(vararg onDuplicateUpdateKeys: Column<*>,
-                                 body: T.(InsertStatement<Number>) -> Unit) = InsertOrUpdate<Number>(onDuplicateUpdateKeys, this).apply {
+                                 body: T.(InsertStatement<Number>) -> Unit) = InsertOrUpdate<Number>(
+    onDuplicateUpdateKeys, this).apply {
     body(this)
     execute(TransactionManager.current())
 }
@@ -127,7 +106,9 @@ class InsertOrUpdate<Key : Any>(private val onDuplicateUpdateKeys: Array<out Col
                                 isIgnore: Boolean = false) : InsertStatement<Key>(table, isIgnore) {
     override fun prepareSQL(transaction: Transaction): String {
         val onUpdateSQL = if (onDuplicateUpdateKeys.isNotEmpty()) {
-            " ON DUPLICATE KEY UPDATE " + onDuplicateUpdateKeys.joinToString { "${transaction.identity(it)}=VALUES(${transaction.identity(it)})" }
+            " ON DUPLICATE KEY UPDATE " + onDuplicateUpdateKeys.joinToString {
+                "${transaction.identity(it)}=VALUES(${transaction.identity(it)})"
+            }
         } else ""
         return super.prepareSQL(transaction) + onUpdateSQL
     }

@@ -8,13 +8,18 @@ abstract class AbstractConfigManager {
     val volatileStorage = VolatileStorage()
 
     abstract val globalConfig: IGlobalConfig
-    abstract fun getGuildConfig(guild: Guild): AbstractGuildConfig
+
+    fun getGuildConfig(guild: Guild): AbstractGuildConfig {
+        return getGuildConfig(guild, globalConfig)
+    }
+
+    protected abstract fun getGuildConfig(guild: Guild, globalConfig: IGlobalConfig): AbstractGuildConfig
 
     fun getLocale(guild: Guild): Locale {
-        return getGuildConfig(guild).guildLocale.orElse(globalConfig.globalLocale)
+        return getGuildConfig(guild).guildLocale ?: globalConfig.globalLocale
     }
 
     fun getCommandPrefix(guild: Guild): String {
-        return getGuildConfig(guild).commandPrefix.orElse(globalConfig.defaultCommandPrefix)
+        return getGuildConfig(guild).commandPrefix ?: globalConfig.defaultCommandPrefix
     }
 }
