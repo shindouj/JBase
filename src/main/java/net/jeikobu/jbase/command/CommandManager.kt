@@ -39,7 +39,7 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
             val locale = configManager.getLocale(destGuild)
 
             val message = event.message
-            val messageStr = message.contentStripped
+            val messageStr = message.contentRaw
 
             if (messageStr.isEmpty() || !messageStr.startsWith(commandPrefix)) {
                 return
