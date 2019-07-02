@@ -4,12 +4,10 @@ import net.dv8tion.jda.core.entities.Guild
 import java.util.*
 import kotlin.reflect.KClass
 
-abstract class AbstractGuildConfig(guild: Guild) {
-    abstract fun getCommandPrefix(): String?
-    abstract fun setCommandPrefix(prefix: String)
+abstract class AbstractGuildConfig(protected val guild: Guild) {
+    abstract var commandPrefix: String?
+    abstract var guildLocale: Locale?
 
-    abstract fun getGuildLocale(): Locale?
-    abstract fun setGuildLocale(locale: Locale)
     abstract fun setValue(key: String, value: String)
 
     inline fun <reified T : Any> getValue(key: String, defaultValue: String? = null): T? {

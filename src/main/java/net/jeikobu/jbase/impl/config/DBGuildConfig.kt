@@ -2,6 +2,7 @@ package net.jeikobu.jbase.impl.config
 
 import net.dv8tion.jda.core.entities.Guild
 import net.jeikobu.jbase.config.AbstractGuildConfig
+import net.jeikobu.jbase.config.IGlobalConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -17,9 +18,17 @@ import kotlin.NoSuchElementException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : AbstractGuildConfig(guild) {
+class DBGuildConfig(guild: Guild, dataSource: DataSource) : AbstractGuildConfig(guild) {
     private val commandPrefixKey = "commandPrefix"
     private val guildLocaleKey   = "guildLocale"
+
+    override var commandPrefix: String?
+        get() = getValue(commandPrefixKey)
+        set(value) = setValue(commandPrefixKey, requireNotNull(value))
+
+    override var guildLocale: Locale?
+        get() = getValue(guildLocaleKey)
+        set(value) = setValue(guildLocaleKey, StringConvert.INSTANCE.convertToString(requireNotNull(value)))
 
     private val db by lazy {
         Database.connect(dataSource)
@@ -35,23 +44,6 @@ class DBGuildConfig(private val guild: Guild, dataSource: DataSource) : Abstract
                 "org.jetbrains.exposed.sql.vendors.MysqlDialect") as Class<DatabaseDialect>).kotlin
             type.createInstance()
         }
-    }
-
-    override fun getCommandPrefix(): String? {
-        return getValue(commandPrefixKey)
-    }
-
-    override fun setCommandPrefix(prefix: String) {
-        return setValue(commandPrefixKey, requireNotNull(prefix))
-    }
-
-    override fun getGuildLocale(): Locale? {
-        return getValue(guildLocaleKey)
-    }
-
-    override fun setGuildLocale(locale: Locale) {
-        val strLocale = StringConvert.INSTANCE.convertToString(requireNotNull(locale))
-        return setValue(guildLocaleKey, strLocale)
     }
 
     override fun <T : Any> getValue(key: String, defaultValue: String?, valueType: KClass<T>): T? {
