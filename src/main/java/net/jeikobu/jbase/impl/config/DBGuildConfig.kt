@@ -72,14 +72,24 @@ class DBGuildConfig(guild: Guild, dataSource: DataSource) : AbstractGuildConfig(
         }
     }
 
-    override fun setValue(key: String, value: String) {
-        transaction(db) {
-            create(GuildKVConfig)
+    override fun setValue(key: String, value: String?) {
+        if (value == null) {
+            transaction(db) {
+                create(GuildKVConfig)
 
-            GuildKVConfig.insertOrUpdate(GuildKVConfig.value) {
-                it[GuildKVConfig.guildID] = this@DBGuildConfig.guildID
-                it[GuildKVConfig.key] = key
-                it[GuildKVConfig.value] = value
+                GuildKVConfig.deleteWhere {
+                    (GuildKVConfig.guildID eq this@DBGuildConfig.guildID) and (GuildKVConfig.key eq key)
+                }
+            }
+        } else {
+            transaction(db) {
+                create(GuildKVConfig)
+
+                GuildKVConfig.insertOrUpdate(GuildKVConfig.value) {
+                    it[GuildKVConfig.guildID] = this@DBGuildConfig.guildID
+                    it[GuildKVConfig.key] = key
+                    it[GuildKVConfig.value] = value
+                }
             }
         }
     }
