@@ -8,7 +8,6 @@ abstract class AbstractConfigManager {
     val volatileStorage = VolatileStorage()
 
     abstract val globalConfig: IGlobalConfig
-
     protected abstract fun getGuildConfig(guild: Guild): AbstractGuildConfig
 
     fun getLocale(guild: Guild): Locale {
