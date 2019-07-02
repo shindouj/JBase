@@ -66,15 +66,15 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
 
                     if (command == null) {
                         Logger.error("Fatal error during primary constructor call")
-                        destChannel.sendMessage(getLocalized(locale, "fatalError"))
+                        destChannel.sendMessage(getLocalized(locale, "fatalError")).queue()
                         return
                     }
 
                     if (commandAnnotation.argsLength + 2 > args.size) {
                         try {
-                            destChannel.sendMessage(command.usageMessage())
+                            destChannel.sendMessage(command.usageMessage()).queue()
                         } catch (ex: IllegalAccessException) {
-                            destChannel.sendMessage(getLocalized(locale, "notEnoughArgs"))
+                            destChannel.sendMessage(getLocalized(locale, "notEnoughArgs")).queue()
                         }
                         return
                     } else {

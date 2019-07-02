@@ -15,10 +15,10 @@ class ChangeLocaleCommand(data: CommandData) : AbstractCommand(data) {
         try {
             val locale = Locale(args[0])
             configManager.getGuildConfig(destinationGuild).guildLocale = locale
-            destinationChannel.sendMessage(getLocalized("localeCommand.changeSuccessful", locale))
+            destinationChannel.sendMessage(getLocalized("localeCommand.changeSuccessful", locale)).queue()
         } catch (e: RuntimeException) {
             Logger.error(e, "Error during conversion")
-            destinationChannel.sendMessage(getLocalized("localeCommand.badLocaleFormat"))
+            destinationChannel.sendMessage(getLocalized("localeCommand.badLocaleFormat")).queue()
         }
     }
 
