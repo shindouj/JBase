@@ -9,8 +9,12 @@ abstract class AbstractGuildConfig(protected val guild: Guild) {
     abstract var commandPrefix: String?
     abstract var guildLocale: Locale?
 
-    inline fun <reified T : Any> setValue(key: String, value: T) {
-        setValue(key, StringConvert.INSTANCE.convertToString(value))
+    inline fun <reified T : Any> setValue(key: String, value: T?) {
+        if (value == null) {
+            setValue(key, null)
+        } else {
+            setValue(key, StringConvert.INSTANCE.convertToString(value))
+        }
     }
 
     abstract fun setValue(key: String, value: String?)
