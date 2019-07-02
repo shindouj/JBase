@@ -61,7 +61,7 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
                         return
                     }
 
-                    val commandData = CommandData(destGuild, destChannel, sender, configManager, args)
+                    val commandData = CommandData(destGuild, destChannel, sender, configManager, args.subList(2, args.size))
                     val command: AbstractCommand? = clazz.primaryConstructor?.call(commandData)
 
                     if (command == null) {
