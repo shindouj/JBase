@@ -2,6 +2,7 @@ package net.jeikobu.jbase
 
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
+import net.dv8tion.jda.core.utils.cache.CacheFlag
 import net.jeikobu.jbase.command.AbstractCommand
 import net.jeikobu.jbase.command.CommandManager
 import net.jeikobu.jbase.config.AbstractConfigManager
@@ -24,6 +25,7 @@ abstract class AbstractBot(configManager: AbstractConfigManager) {
 
         clientBuilder.setToken(configManager.globalConfig.token)
         clientBuilder.addEventListener(commandManager)
+        clientBuilder.setEnabledCacheFlags(EnumSet.of(CacheFlag.EMOTE))
 
         client = clientBuilder.build()
         client.awaitReady()
