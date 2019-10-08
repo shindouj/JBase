@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.hooks.EventListener
 import net.jeikobu.jbase.Localized
 import net.jeikobu.jbase.config.AbstractConfigManager
 import org.pmw.tinylog.Logger
+import java.lang.NullPointerException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -55,7 +56,13 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
 
             for (clazz in registeredCommands) {
                 val commandAnnotation = clazz.findAnnotation<Command>()
-                if (commandAnnotation?.name?.equals(suppliedCommandName) == true) {
+
+                if (commandAnnotation == null) {
+                    Logger.error("Fatal error during annotation search! One of registered commands have no annotation.")
+                    continue
+                }
+
+                if (commandAnnotation.name.equals(suppliedCommandName, ignoreCase = true)) {
                     if (!sender.permissions.containsAll(commandAnnotation.permissions.asList())) {
                         destChannel.sendMessage(getLocalized(locale, "insufficientPermissions"))
                         return
@@ -65,7 +72,7 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
                     val command: AbstractCommand? = clazz.primaryConstructor?.call(commandData)
 
                     if (command == null) {
-                        Logger.error("Fatal error during primary constructor call")
+                        Logger.error("Fatal error during primary constructor call!")
                         destChannel.sendMessage(getLocalized(locale, "fatalError")).queue()
                         return
                     }
