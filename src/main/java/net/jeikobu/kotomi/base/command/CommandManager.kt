@@ -1,12 +1,11 @@
-package net.jeikobu.jbase.command
+package net.jeikobu.kotomi.base.command
 
 import net.dv8tion.jda.core.events.Event
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.EventListener
-import net.jeikobu.jbase.Localized
-import net.jeikobu.jbase.config.AbstractConfigManager
+import net.jeikobu.kotomi.base.Localized
+import net.jeikobu.kotomi.base.config.AbstractConfigManager
 import org.pmw.tinylog.Logger
-import java.lang.NullPointerException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor

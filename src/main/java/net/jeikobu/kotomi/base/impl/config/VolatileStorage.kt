@@ -1,4 +1,4 @@
-package net.jeikobu.jbase.impl.config
+package net.jeikobu.kotomi.base.impl.config
 
 import net.dv8tion.jda.core.entities.Guild
 

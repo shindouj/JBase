@@ -1,7 +1,7 @@
-package net.jeikobu.jbase.config
+package net.jeikobu.kotomi.base.config
 
 import net.dv8tion.jda.core.entities.Guild
-import net.jeikobu.jbase.impl.config.VolatileStorage
+import net.jeikobu.kotomi.base.impl.config.VolatileStorage
 import java.util.*
 
 abstract class AbstractConfigManager {

@@ -1,13 +1,13 @@
-package net.jeikobu.jbase
+package net.jeikobu.kotomi.base
 
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.utils.cache.CacheFlag
-import net.jeikobu.jbase.command.AbstractCommand
-import net.jeikobu.jbase.command.CommandManager
-import net.jeikobu.jbase.config.AbstractConfigManager
-import net.jeikobu.jbase.impl.commands.ChangeLocaleCommand
-import net.jeikobu.jbase.impl.commands.ChangePrefixCommand
+import net.jeikobu.kotomi.base.command.AbstractCommand
+import net.jeikobu.kotomi.base.command.CommandManager
+import net.jeikobu.kotomi.base.config.AbstractConfigManager
+import net.jeikobu.kotomi.base.impl.commands.ChangeLocaleCommand
+import net.jeikobu.kotomi.base.impl.commands.ChangePrefixCommand
 import java.util.*
 import kotlin.reflect.KClass
 

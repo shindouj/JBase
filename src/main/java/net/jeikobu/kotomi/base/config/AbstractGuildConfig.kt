@@ -1,4 +1,4 @@
-package net.jeikobu.jbase.config
+package net.jeikobu.kotomi.base.config
 
 import net.dv8tion.jda.core.entities.Guild
 import org.joda.convert.StringConvert
