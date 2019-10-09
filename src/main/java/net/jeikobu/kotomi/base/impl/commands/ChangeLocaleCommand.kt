@@ -1,10 +1,10 @@
-package net.jeikobu.jbase.impl.commands
+package net.jeikobu.kotomi.base.impl.commands
 
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Message
-import net.jeikobu.jbase.command.AbstractCommand
-import net.jeikobu.jbase.command.Command
-import net.jeikobu.jbase.command.CommandData
+import net.jeikobu.kotomi.base.command.AbstractCommand
+import net.jeikobu.kotomi.base.command.Command
+import net.jeikobu.kotomi.base.command.CommandData
 import org.pmw.tinylog.Logger
 import java.lang.RuntimeException
 import java.util.*

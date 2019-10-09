@@ -1,4 +1,4 @@
-package net.jeikobu.jbase.command
+package net.jeikobu.kotomi.base.command
 
 import net.dv8tion.jda.core.Permission
 

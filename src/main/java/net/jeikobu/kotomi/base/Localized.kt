@@ -1,4 +1,4 @@
-package net.jeikobu.jbase
+package net.jeikobu.kotomi.base
 
 import java.util.*
 import java.util.regex.Pattern

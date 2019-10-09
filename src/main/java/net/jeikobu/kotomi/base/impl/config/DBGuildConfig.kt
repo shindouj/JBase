@@ -1,8 +1,8 @@
-package net.jeikobu.jbase.impl.config
+package net.jeikobu.kotomi.base.impl.config
 
 import net.dv8tion.jda.core.entities.Guild
-import net.jeikobu.jbase.config.AbstractGuildConfig
-import net.jeikobu.jbase.config.IGlobalConfig
+import net.jeikobu.kotomi.base.config.AbstractGuildConfig
+import net.jeikobu.kotomi.base.config.IGlobalConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.statements.InsertStatement
@@ -86,7 +86,7 @@ class DBGuildConfig(guild: Guild, dataSource: DataSource) : AbstractGuildConfig(
                 create(GuildKVConfig)
 
                 GuildKVConfig.insertOrUpdate(GuildKVConfig.value) {
-                    it[GuildKVConfig.guildID] = this@DBGuildConfig.guildID
+                    it[guildID] = this@DBGuildConfig.guildID
                     it[GuildKVConfig.key] = key
                     it[GuildKVConfig.value] = value
                 }
@@ -107,7 +107,7 @@ class DBGuildConfig(guild: Guild, dataSource: DataSource) : AbstractGuildConfig(
 
 fun <T : Table> T.insertOrUpdate(vararg onDuplicateUpdateKeys: Column<*>,
                                  body: T.(InsertStatement<Number>) -> Unit) = InsertOrUpdate<Number>(
-    onDuplicateUpdateKeys, this).apply {
+        onDuplicateUpdateKeys, this).apply {
     body(this)
     execute(TransactionManager.current())
 }

@@ -1,10 +1,10 @@
-package net.jeikobu.jbase.command
+package net.jeikobu.kotomi.base.command
 
 import net.dv8tion.jda.core.entities.*
-import net.jeikobu.jbase.Localized
-import net.jeikobu.jbase.config.AbstractConfigManager
-import net.jeikobu.jbase.config.AbstractGuildConfig
-import net.jeikobu.jbase.config.IGlobalConfig
+import net.jeikobu.kotomi.base.Localized
+import net.jeikobu.kotomi.base.config.AbstractConfigManager
+import net.jeikobu.kotomi.base.config.AbstractGuildConfig
+import net.jeikobu.kotomi.base.config.IGlobalConfig
 
 abstract class AbstractCommand(commandData: CommandData) : Localized() {
     protected val destinationGuild: Guild = commandData.destinationGuild

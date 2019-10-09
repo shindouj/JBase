@@ -1,6 +1,6 @@
-package net.jeikobu.jbase.impl.config
+package net.jeikobu.kotomi.base.impl.config
 
-import net.jeikobu.jbase.config.IGlobalConfig
+import net.jeikobu.kotomi.base.config.IGlobalConfig
 import org.cfg4j.provider.ConfigurationProvider
 import org.cfg4j.provider.ConfigurationProviderBuilder
 import org.cfg4j.source.context.environment.ImmutableEnvironment
