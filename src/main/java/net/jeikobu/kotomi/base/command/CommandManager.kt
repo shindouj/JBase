@@ -6,7 +6,6 @@ import net.dv8tion.jda.core.hooks.EventListener
 import net.jeikobu.kotomi.base.Localized
 import net.jeikobu.kotomi.base.config.AbstractConfigManager
 import org.pmw.tinylog.Logger
-import java.lang.NullPointerException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
