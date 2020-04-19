@@ -1,0 +1,26 @@
+name: ci-develop
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    
+    - name: Setup JDK
+      uses: actions/setup-java@v1.3.0
+      with:
+        java-version: 1.8
+
+    - name: Execute Gradle
+      uses: eskatos/gradle-command-action@v1
+      env:
+        github: true
+        nexusUsername: ${{ secrets.nexusUsername }}
+        nexusPassword: ${{ secrets.nexusPassword }}
+      with:
+        arguments: clean publish
