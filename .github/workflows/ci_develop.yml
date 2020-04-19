@@ -23,4 +23,4 @@ jobs:
         nexusUsername: ${{ secrets.nexusUsername }}
         nexusPassword: ${{ secrets.nexusPassword }}
       with:
-        arguments: clean publish
+        arguments: -Pgithub=true clean publish
