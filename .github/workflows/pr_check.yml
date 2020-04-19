@@ -18,7 +18,5 @@ jobs:
 
     - name: Execute Gradle
       uses: eskatos/gradle-command-action@v1
-      env:
-        github: true
       with:
         arguments: -Pgithub=true clean build
