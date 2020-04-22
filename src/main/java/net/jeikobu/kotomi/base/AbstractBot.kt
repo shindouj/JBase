@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 abstract class AbstractBot(configManager: AbstractConfigManager) {
-    protected val defaultCommands: MutableList<KClass<out AbstractCommand>> = Arrays.asList(ChangeLocaleCommand::class, ChangePrefixCommand::class)
+    protected val defaultCommands: MutableList<AbstractCommand> = mutableListOf(ChangeLocaleCommand(), ChangePrefixCommand())
     protected val commandManager = CommandManager(configManager)
     private val clientBuilder = JDABuilder()
 

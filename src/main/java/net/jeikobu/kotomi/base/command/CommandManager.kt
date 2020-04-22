@@ -6,39 +6,32 @@ import net.dv8tion.jda.core.hooks.EventListener
 import net.jeikobu.kotomi.base.Localized
 import net.jeikobu.kotomi.base.config.AbstractConfigManager
 import org.pmw.tinylog.Logger
-import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.primaryConstructor
 
 class CommandManager(private val configManager: AbstractConfigManager) : Localized(), EventListener {
-    private val registeredCommands = ArrayList<KClass<out AbstractCommand>>()
+    private val registeredCommands = ArrayList<AbstractCommand>()
 
-    fun registerCommand(clazz: KClass<out AbstractCommand>) {
-        registeredCommands.add(clazz)
+    fun registerCommand(command: AbstractCommand) {
+        registeredCommands.add(command)
     }
 
-    fun deregisterCommand(clazz: KClass<out AbstractCommand>) {
-        registeredCommands.remove(clazz)
+    fun deregisterCommand(command: AbstractCommand) {
+        registeredCommands.remove(command)
     }
 
-    fun registerAll(classCollection: Collection<KClass<out AbstractCommand>>) {
-        registeredCommands.addAll(classCollection)
+    fun registerAll(cmdCollection: Collection<AbstractCommand>) {
+        registeredCommands.addAll(cmdCollection)
     }
 
-    fun deregisterAll(classCollection: Collection<KClass<out AbstractCommand>>) {
-        registeredCommands.removeAll(classCollection)
+    fun deregisterAll(cmdCollection: Collection<AbstractCommand>) {
+        registeredCommands.removeAll(cmdCollection)
     }
 
-    override fun onEvent(event: Event) {
-        if (event is MessageReceivedEvent) {
-            val destGuild = event.guild
-            val destChannel = event.textChannel
-            val sender = destGuild.getMember(event.author)
-
-            val commandPrefix = configManager.getCommandPrefix(destGuild)
-            val locale = configManager.getLocale(destGuild)
-
-            val message = event.message
+    override fun onEvent(e: Event) {
+        if (e is MessageReceivedEvent) {
+            val sender = e.guild.getMember(e.author)
+            val commandPrefix = configManager.getCommandPrefix(e.guild)
+            val locale = configManager.getLocale(e.guild)
+            val message = e.message
             val messageStr = message.contentRaw
 
             if (messageStr.isEmpty() || !messageStr.startsWith(commandPrefix)) {
@@ -46,49 +39,32 @@ class CommandManager(private val configManager: AbstractConfigManager) : Localiz
             }
 
             val args = messageStr.split(" ")
-
             if (args.size < 2) {
                 return
             }
 
-            val suppliedCommandName = args[1]
+            val matchingCommands = registeredCommands.filter { it.name == args[1] || it.aliases.contains(args[1]) }
+            if (matchingCommands.size > 1) {
+                Logger.error("Critical error: More than one command matching!")
+                e.textChannel.sendMessage(getLocalized(locale, "fatalError", "More than one command matching")).queue()
+            } else if (matchingCommands.isEmpty()) {
+                return
+            }
 
-            for (clazz in registeredCommands) {
-                val commandAnnotation = clazz.findAnnotation<Command>()
+            val command = matchingCommands.first()
+            val commandData = CommandData(e.guild, e.textChannel, sender, configManager, args.subList(2, args.size))
 
-                if (commandAnnotation == null) {
-                    Logger.error("Fatal error during annotation search! One of registered commands have no annotation.")
-                    continue
-                }
+            if (!sender.permissions.containsAll(command.permissions)) {
+                e.textChannel.sendMessage(getLocalized(locale, "insufficientPermissions")).queue()
+                return
+            }
 
-                if (commandAnnotation.name.equals(suppliedCommandName, ignoreCase = true)) {
-                    if (!sender.permissions.containsAll(commandAnnotation.permissions.asList())) {
-                        destChannel.sendMessage(getLocalized(locale, "insufficientPermissions"))
-                        return
-                    }
-
-                    val commandData = CommandData(destGuild, destChannel, sender, configManager, args.subList(2, args.size))
-                    val command: AbstractCommand? = clazz.primaryConstructor?.call(commandData)
-
-                    if (command == null) {
-                        Logger.error("Fatal error during primary constructor call!")
-                        destChannel.sendMessage(getLocalized(locale, "fatalError")).queue()
-                        return
-                    }
-
-                    if (commandAnnotation.argsLength + 2 > args.size) {
-                        try {
-                            destChannel.sendMessage(command.usageMessage()).queue()
-                        } catch (ex: IllegalAccessException) {
-                            destChannel.sendMessage(getLocalized(locale, "notEnoughArgs")).queue()
-                        }
-                        return
-                    } else {
-                        command.run(message)
-                    }
-                }
+            if (command.argsLength + 2 > args.size) {
+                e.textChannel.sendMessage(getLocalized(locale, "notEnoughArgs")).queue()
+                return
+            } else {
+                command.run(commandData, message)
             }
         }
     }
-
 }
